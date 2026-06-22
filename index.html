@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight | Personal Finance Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="light">
+    <!-- Grid Background -->
+    <div class="grid-background"></div>
+    <!-- Decorative Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar-header">
+        <a class="nav-brand" href="#">
+            <span class="brand-logo">F</span>
+            <span class="brand-text">FinSight</span>
+        </a>
+        <nav class="nav-controls">
+            <a href="#features-anchor" id="nav-about-link" class="nav-link">Features</a>
+            <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                <i data-lucide="moon" id="theme-icon"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Landing Page (Hero + Features) -->
+    <main id="landing-page" class="landing-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-glow-1"></div>
+            <div class="hero-glow-2"></div>
+            
+            <div class="hero-text-content">
+                <h1 class="hero-title">Take control of your money in <span class="italic-accent">real-time</span></h1>
+                
+                <div class="hero-cta-group">
+                    <button id="get-started-btn" class="btn primary-btn">
+                        Enter Dashboard
+                        <i data-lucide="arrow-right" class="btn-arrow"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3D Perspective Card Mockup -->
+            <div class="hero-preview-container">
+                <div class="perspective-card">
+                    <div class="mock-header">
+                        <div class="mock-dot-group">
+                            <span class="mock-dot"></span>
+                            <span class="mock-dot"></span>
+                            <span class="mock-dot"></span>
+                        </div>
+                        <span class="mock-title">live_ledger.json</span>
+                    </div>
+                    <div class="mock-body">
+                        <div class="mock-stat-row">
+                            <span class="mock-label">TOTAL BALANCE</span>
+                            <span class="mock-value">$14,250.00</span>
+                        </div>
+                        <div class="mock-chart-bar" style="width: 85%; background: var(--accent-color);"></div>
+                        <div class="mock-chart-bar" style="width: 40%; background: var(--danger-color);"></div>
+                        <div class="mock-chart-bar" style="width: 60%; background: #3B82F6;"></div>
+                        <div class="mock-grid-lines">
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid Section -->
+        <section id="features-anchor" class="features-section">
+            <div class="section-header">
+                <p class="section-tag">Capabilities</p>
+                <h2 class="section-title">Designed for modern financial clarity</h2>
+            </div>
+            
+            <div class="features-grid">
+                <!-- Card 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="activity"></i></div>
+                    <span class="feature-badge">Automated</span>
+                    <h3>Health Score</h3>
+                    <p>Live analysis of your spending-to-income ratio keeps you informed of your overall budget sustainability.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="pie-chart"></i></div>
+                    <span class="feature-badge">High Fidelity</span>
+                    <h3>Interactive Charts</h3>
+                    <p>Visual breakdowns dynamically adapt as you add transactions, rendered with beautiful, custom-themed charts.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+                    <span class="feature-badge">Privacy First</span>
+                    <h3>Zero Database</h3>
+                    <p>Your financial data never leaves your browser. All ledger operations run locally via localStorage cache.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="moon"></i></div>
+                    <span class="feature-badge">Visuals</span>
+                    <h3>Dual Themes</h3>
+                    <p>Instantly transition between a clean warm light palette and a sleek charcoal slate dark mode.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom CTA -->
+        <section class="bottom-cta-section">
+            <button id="get-started-btn-bottom" class="btn primary-btn">
+                Enter Dashboard
+                <i data-lucide="arrow-right" class="btn-arrow"></i>
+            </button>
+        </section>
+    </main>
+
+    <!-- Dashboard Main Interface -->
+    <main id="dashboard" class="dashboard-container hidden">
+        <header class="dashboard-banner">
+            <div>
+                <h2>Overview</h2>
+                <p class="banner-subtext">Manage your ledger and view analytics in real-time.</p>
+            </div>
+            <button id="back-to-landing" class="btn secondary-btn">
+                <i data-lucide="arrow-left"></i>
+                Landing Page
+            </button>
+        </header>
+
+        <!-- Summary Statistics -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="card-icon balance"><i data-lucide="landmark"></i></div>
+                <div class="card-info">
+                    <p class="stat-label">Total Balance</p>
+                    <h3 id="total-balance" class="stat-value">$0.00</h3>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-icon income"><i data-lucide="trending-up"></i></div>
+                <div class="card-info">
+                    <p class="stat-label">Total Income</p>
+                    <h3 id="total-income" class="stat-value">$0.00</h3>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-icon expense"><i data-lucide="trending-down"></i></div>
+                <div class="card-info">
+                    <p class="stat-label">Total Expenses</p>
+                    <h3 id="total-expense" class="stat-value">$0.00</h3>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-icon health"><i data-lucide="activity"></i></div>
+                <div class="card-info">
+                    <p class="stat-label">Budget Health</p>
+                    <h3 id="health-score" class="stat-value">N/A</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout Grid -->
+        <div class="dashboard-layout">
+            <!-- Left Side: Inputs & Transaction Ledger -->
+            <div class="control-panel">
+                <!-- Transaction Form Card -->
+                <div class="panel-card">
+                    <div class="card-title-group">
+                        <i data-lucide="plus-circle" class="title-icon"></i>
+                        <h3>Add Transaction</h3>
+                    </div>
+                    <form id="transaction-form">
+                        <div class="form-group">
+                            <label class="group-label">Transaction Type</label>
+                            <div class="type-toggle-container">
+                                <label class="toggle-option">
+                                    <input type="radio" name="type" value="income" checked>
+                                    <span class="toggle-label income-theme">Income</span>
+                                </label>
+                                <label class="toggle-option">
+                                    <input type="radio" name="type" value="expense">
+                                    <span class="toggle-label expense-theme">Expense</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount" class="group-label">Amount ($)</label>
+                            <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category" class="group-label">Category</label>
+                            <select id="category" required>
+                                <!-- JavaScript injects options dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="description" id="description-label" class="group-label">Description</label>
+                            <input type="text" id="description" placeholder="e.g. Consulting Fee" required>
+                        </div>
+                        <button type="submit" class="btn primary-btn full-width">Post Transaction</button>
+                    </form>
+                </div>
+
+                <!-- Ledger History Card -->
+                <div class="panel-card">
+                    <div class="card-title-group">
+                        <i data-lucide="list" class="title-icon"></i>
+                        <h3>Transaction Ledger</h3>
+                    </div>
+                    <ul id="transaction-list" class="ledger-list">
+                        <!-- Injected by script.js -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Side: Data Visualizations -->
+            <div class="visuals-panel">
+                <div class="panel-card chart-card">
+                    <h3>Flow Comparison</h3>
+                    <div class="chart-box">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+                <div class="panel-card chart-card">
+                    <h3>Expense Allocations</h3>
+                    <div class="chart-box">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-bar">
+        <span class="footer-logo">FinSight ® Lab</span>
+        <span class="footer-meta">Interactive Financial Simulations & Ledgering</span>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Home</a>
+            <a href="#features-anchor" class="footer-link">Features</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
