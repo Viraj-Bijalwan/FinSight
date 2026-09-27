@@ -1,0 +1,26 @@
+{
+    "name": "FinSight — Personal Finance Dashboard",
+    "short_name": "FinSight",
+    "description": "A privacy-first, zero-database personal finance dashboard. Local, offline, and sovereign.",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#F5F4F0",
+    "theme_color": "#16A34A",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='28' fill='%2316A34A'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='120' font-family='monospace' font-weight='700' fill='white'>F</text></svg>",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='72' fill='%2316A34A'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='320' font-family='monospace' font-weight='700' fill='white'>F</text></svg>",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["finance", "productivity"],
+    "lang": "en-US"
+}

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight | Personal Finance Dashboard</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="description" content="A privacy-first, zero-database personal finance dashboard. Local, offline, and sovereign.">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2pdf.js for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="light">
+    <!-- Grid Background -->
+    <div class="grid-background"></div>
+    <!-- Decorative Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar-header">
+        <a class="nav-brand" href="#">
+            <span class="brand-logo">F</span>
+            <span class="brand-text">FinSight</span>
+        </a>
+        <nav class="nav-controls">
+            <a href="#features-anchor" id="nav-about-link" class="nav-link">Features</a>
+            <!-- Currency Selector -->
+            <select id="currency-select" class="currency-select" title="Select Currency" aria-label="Select Currency">
+                <option value="USD">$ USD</option>
+                <option value="EUR">€ EUR</option>
+                <option value="GBP">£ GBP</option>
+                <option value="INR">₹ INR</option>
+                <option value="JPY">¥ JPY</option>
+            </select>
+            <!-- Command Palette Trigger -->
+            <button id="cmd-palette-trigger" class="icon-btn nav-cmd-btn" aria-label="Open Command Palette" title="Command Palette (Ctrl+K)">
+                <i data-lucide="terminal-square"></i>
+                <kbd class="nav-kbd">⌘K</kbd>
+            </button>
+            <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                <i data-lucide="moon" id="theme-icon"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- ═══════════════════════════════════ -->
+    <!--  COMMAND PALETTE OVERLAY            -->
+    <!-- ═══════════════════════════════════ -->
+    <div id="cmd-palette" class="cmd-overlay hidden" role="dialog" aria-modal="true" aria-label="Command Palette">
+        <div class="cmd-modal">
+            <div class="cmd-search-row">
+                <i data-lucide="search" class="cmd-search-icon"></i>
+                <input id="cmd-input" type="text" placeholder="Type a command..." autocomplete="off" spellcheck="false">
+                <kbd class="cmd-esc-hint">ESC</kbd>
+            </div>
+            <ul id="cmd-list" class="cmd-results"></ul>
+            <div class="cmd-footer">
+                <span><kbd>↑↓</kbd> Navigate</span>
+                <span><kbd>↵</kbd> Execute</span>
+                <span><kbd>Esc</kbd> Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ -->
+    <!--  CUSTOM MODAL DIALOG                -->
+    <!-- ═══════════════════════════════════ -->
+    <div id="custom-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i data-lucide="alert-triangle" class="modal-icon"></i>
+                <h3 id="modal-title">Confirm Action</h3>
+            </div>
+            <p id="modal-message" class="modal-message">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button id="modal-cancel-btn" class="btn secondary-btn">Cancel</button>
+                <button id="modal-confirm-btn" class="btn danger-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ -->
+    <!--  LANDING PAGE                       -->
+    <!-- ═══════════════════════════════════ -->
+    <main id="landing-page" class="landing-container">
+        <!-- Hero -->
+        <section class="hero-section">
+            <div class="hero-glow-1"></div>
+            <div class="hero-glow-2"></div>
+
+            <div class="hero-text-content">
+                <div class="hero-badge">
+                    <i data-lucide="shield-check" style="width:13px;height:13px;"></i>
+                    Privacy-First · Zero Backend · 100% Local
+                </div>
+                <h1 class="hero-title">Take control of your money in <span class="italic-accent">real-time</span></h1>
+                <p class="hero-subtitle">A full-featured financial dashboard that lives entirely in your browser. No accounts, no tracking, no servers.</p>
+                <div class="hero-cta-group">
+                    <button id="get-started-btn" class="btn primary-btn">
+                        Enter Dashboard
+                        <i data-lucide="arrow-right" class="btn-arrow"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3D Perspective Card -->
+            <div class="hero-preview-container">
+                <div class="perspective-card">
+                    <div class="mock-header">
+                        <div class="mock-dot-group">
+                            <span class="mock-dot"></span>
+                            <span class="mock-dot"></span>
+                            <span class="mock-dot"></span>
+                        </div>
+                        <span class="mock-title">live_ledger.json</span>
+                    </div>
+                    <div class="mock-body">
+                        <div class="mock-stat-row">
+                            <span class="mock-label">TOTAL BALANCE</span>
+                            <span class="mock-value">$14,250.00</span>
+                        </div>
+                        <div class="mock-chart-bar" style="width:85%;background:var(--accent-color);"></div>
+                        <div class="mock-chart-bar" style="width:40%;background:var(--danger-color);"></div>
+                        <div class="mock-chart-bar" style="width:60%;background:#3B82F6;"></div>
+                        <div class="mock-grid-lines">
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section id="features-anchor" class="features-section">
+            <div class="section-header">
+                <p class="section-tag">Capabilities</p>
+                <h2 class="section-title">Designed for modern financial clarity</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="activity"></i></div>
+                    <span class="feature-badge">Automated</span>
+                    <h3>Health Score</h3>
+                    <p>Live spending-to-income ratio analysis with Excellent / Good / Warning / Critical tiers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="pie-chart"></i></div>
+                    <span class="feature-badge">High Fidelity</span>
+                    <h3>6-Month Trends</h3>
+                    <p>Bar, doughnut, and line charts dynamically adapt as you post transactions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+                    <span class="feature-badge">Privacy First</span>
+                    <h3>Zero Database</h3>
+                    <p>Your data never leaves your browser. All operations run locally via localStorage.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="target"></i></div>
+                    <span class="feature-badge">Goals</span>
+                    <h3>Budget & Savings</h3>
+                    <p>Set category spending caps and savings goals with real-time progress tracking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="terminal-square"></i></div>
+                    <span class="feature-badge">Power User</span>
+                    <h3>Command Palette</h3>
+                    <p>Press Ctrl+K to instantly access any action — export, reset, theme, and more.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="wifi-off"></i></div>
+                    <span class="feature-badge">PWA</span>
+                    <h3>Works Offline</h3>
+                    <p>Install as a Progressive Web App. All features work with zero internet connection.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom CTA -->
+        <section class="bottom-cta-section">
+            <button id="get-started-btn-bottom" class="btn primary-btn">
+                Enter Dashboard
+                <i data-lucide="arrow-right" class="btn-arrow"></i>
+            </button>
+        </section>
+    </main>
+
+    <!-- ═══════════════════════════════════ -->
+    <!--  DASHBOARD                          -->
+    <!-- ═══════════════════════════════════ -->
+    <main id="dashboard" class="dashboard-container hidden">
+        <!-- Dashboard Banner -->
+        <header class="dashboard-banner">
+            <div>
+                <h2>Overview</h2>
+                <p class="banner-subtext">Manage your ledger and view analytics in real-time.</p>
+            </div>
+            <div class="banner-actions">
+                <button id="load-demo-btn" class="btn demo-btn" title="Populate with 13 sample transactions, budgets & goals">
+                    <i data-lucide="sparkles"></i> Load Demo Data
+                </button>
+                <button id="back-to-landing" class="btn secondary-btn">
+                    <i data-lucide="arrow-left"></i> Landing Page
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Stats Cards -->
+        <div class="summary-grid" id="pdf-capture-region">
+            <div class="summary-card">
+                <div class="card-icon balance"><i data-lucide="landmark"></i></div>
+                <div class="card-info">
+                    <div class="stat-header-row">
+                        <p class="stat-label">Total Balance</p>
+                        <span id="savings-rate-badge" class="badge-pill savings-pill" title="Savings Rate: (Income − Expenses) / Income × 100">0% Saved</span>
+                    </div>
+                    <h3 id="total-balance" class="stat-value">$0.00</h3>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-icon income"><i data-lucide="trending-up"></i></div>
+                <div class="card-info">
+                    <div class="stat-header-row">
+                        <p class="stat-label">Total Income</p>
+                        <span id="income-count-badge" class="badge-pill subtle-pill">0 items</span>
+                    </div>
+                    <h3 id="total-income" class="stat-value">$0.00</h3>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-icon expense"><i data-lucide="trending-down"></i></div>
+                <div class="card-info">
+                    <div class="stat-header-row">
+                        <p class="stat-label">Total Expenses</p>
+                        <span id="expense-count-badge" class="badge-pill subtle-pill">0 items</span>
+                    </div>
+                    <h3 id="total-expense" class="stat-value">$0.00</h3>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-icon health"><i data-lucide="activity"></i></div>
+                <div class="card-info">
+                    <div class="stat-header-row">
+                        <p class="stat-label">Budget Health</p>
+                        <div class="tooltip-wrapper" tabindex="0" aria-label="Budget Health info">
+                            <i data-lucide="info" class="tooltip-trigger"></i>
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Budget Health Ratio</div>
+                                <p class="tooltip-desc">Based on your Spending-to-Income ratio:</p>
+                                <ul class="tooltip-list">
+                                    <li><span class="dot-indicator dot-excellent"></span> <strong>Excellent:</strong> ≤ 50% spent</li>
+                                    <li><span class="dot-indicator dot-good"></span> <strong>Good:</strong> ≤ 80% spent</li>
+                                    <li><span class="dot-indicator dot-warning"></span> <strong>Warning:</strong> ≤ 100% spent</li>
+                                    <li><span class="dot-indicator dot-critical"></span> <strong>Critical:</strong> &gt; 100% (Deficit)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 id="health-score" class="stat-value">N/A</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout">
+
+            <!-- ── Left Column: Form + Ledger ── -->
+            <div class="control-panel">
+
+                <!-- Transaction Form -->
+                <div class="panel-card" id="transaction-form-card">
+                    <div class="card-title-group flex-between">
+                        <div class="title-left">
+                            <i data-lucide="plus-circle" class="title-icon"></i>
+                            <h3 id="form-title">Add Transaction</h3>
+                        </div>
+                        <span id="edit-badge" class="badge-pill savings-pill warning hidden">Editing Mode</span>
+                    </div>
+                    <form id="transaction-form">
+                        <div class="form-group">
+                            <label class="group-label">Transaction Type</label>
+                            <div class="type-toggle-container">
+                                <label class="toggle-option">
+                                    <input type="radio" name="type" value="income" checked>
+                                    <span class="toggle-label income-theme">Income</span>
+                                </label>
+                                <label class="toggle-option">
+                                    <input type="radio" name="type" value="expense">
+                                    <span class="toggle-label expense-theme">Expense</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount" class="group-label">Amount</label>
+                            <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category" class="group-label">Category</label>
+                            <select id="category" required><!-- Injected by JS --></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="description" id="description-label" class="group-label">Description</label>
+                            <input type="text" id="description" placeholder="e.g. Consulting Fee" required>
+                        </div>
+                        <!-- Recurring Checkbox -->
+                        <div class="form-group form-group-inline">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="recurring-check">
+                                <span class="checkbox-custom"></span>
+                                <span class="group-label" style="margin:0;">Mark as Recurring</span>
+                            </label>
+                            <span class="subtle-hint"><i data-lucide="repeat-2" style="width:11px;height:11px;vertical-align:middle;"></i> Auto-posts daily</span>
+                        </div>
+                        <div class="form-btn-group">
+                            <button type="submit" id="form-submit-btn" class="btn primary-btn full-width">Post Transaction</button>
+                            <button type="button" id="cancel-edit-btn" class="btn secondary-btn hidden">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Ledger Card -->
+                <div class="panel-card">
+                    <div class="card-title-group flex-between">
+                        <div class="title-left">
+                            <i data-lucide="list" class="title-icon"></i>
+                            <h3>Transaction Ledger</h3>
+                            <span id="ledger-count-pill" class="badge-pill subtle-pill">0</span>
+                        </div>
+                        <div class="title-actions">
+                            <input type="file" id="import-csv-input" accept=".csv" style="display:none;">
+                            <input type="file" id="restore-state-input" accept=".json" style="display:none;">
+                            <button id="import-csv-btn" class="btn-action-text" title="Import CSV">
+                                <i data-lucide="upload"></i><span>Import</span>
+                            </button>
+                            <button id="export-csv-btn" class="btn-action-text" title="Export CSV">
+                                <i data-lucide="download"></i><span>CSV</span>
+                            </button>
+                            <button id="export-pdf-btn" class="btn-action-text" title="Export PDF Report">
+                                <i data-lucide="file-text"></i><span>PDF</span>
+                            </button>
+                            <button id="backup-state-btn" class="btn-action-text" title="Backup all state as JSON">
+                                <i data-lucide="archive"></i><span>Backup</span>
+                            </button>
+                            <button id="restore-state-btn" class="btn-action-text" title="Restore from JSON backup">
+                                <i data-lucide="archive-restore"></i><span>Restore</span>
+                            </button>
+                            <button id="clear-data-btn" class="btn-action-text danger" title="Clear all data">
+                                <i data-lucide="trash-2"></i><span>Clear All</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Toolbar -->
+                    <div class="ledger-filter-toolbar">
+                        <div class="search-input-wrapper">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="search-ledger" placeholder="Search description, category, amount..." autocomplete="off">
+                            <button type="button" id="clear-search-btn" class="clear-search-btn hidden" aria-label="Clear Search">
+                                <i data-lucide="x"></i>
+                            </button>
+                        </div>
+                        <div class="filter-controls-row">
+                            <div class="filter-type-group">
+                                <button type="button" class="filter-pill active" data-type="all">All</button>
+                                <button type="button" class="filter-pill" data-type="income">Income</button>
+                                <button type="button" class="filter-pill" data-type="expense">Expense</button>
+                            </div>
+                            <div class="filter-selects-group">
+                                <select id="filter-period" class="filter-select" aria-label="Filter by Period">
+                                    <option value="all">All Time</option>
+                                    <option value="this-month">This Month</option>
+                                    <option value="last-30">Last 30 Days</option>
+                                    <option value="this-year">This Year</option>
+                                </select>
+                                <select id="filter-category" class="filter-select" aria-label="Filter by Category">
+                                    <option value="all">All Categories</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Date Range Filter -->
+                        <div class="date-range-row">
+                            <i data-lucide="calendar-range" style="width:14px;height:14px;color:var(--text-secondary);flex-shrink:0;"></i>
+                            <label class="date-range-label">From</label>
+                            <input type="date" id="date-from" class="date-input" aria-label="Date from">
+                            <label class="date-range-label">To</label>
+                            <input type="date" id="date-to" class="date-input" aria-label="Date to">
+                            <button id="clear-date-range-btn" class="btn-action-text hidden" title="Clear date range">
+                                <i data-lucide="x" style="width:12px;height:12px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <ul id="transaction-list" class="ledger-list"></ul>
+
+                    <!-- Pagination -->
+                    <div id="ledger-pagination" class="pagination-bar hidden">
+                        <button id="prev-page-btn" class="btn secondary-btn btn-sm" aria-label="Previous page">
+                            <i data-lucide="chevron-left" style="width:14px;height:14px;"></i> Prev
+                        </button>
+                        <span id="page-info" class="page-info">Page 1 of 1</span>
+                        <button id="next-page-btn" class="btn secondary-btn btn-sm" aria-label="Next page">
+                            Next <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Right Column: Charts + Insights ── -->
+            <div class="visuals-panel">
+
+                <!-- Flow Bar Chart -->
+                <div class="panel-card chart-card">
+                    <h3>Income vs Expenses</h3>
+                    <div class="chart-box">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Monthly Trend Line Chart -->
+                <div class="panel-card chart-card">
+                    <div class="card-title-group flex-between">
+                        <h3>6-Month Trend</h3>
+                        <span class="badge-pill subtle-pill">Income &amp; Expenses</span>
+                    </div>
+                    <div class="chart-box">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Expense Allocation Doughnut -->
+                <div class="panel-card chart-card">
+                    <h3>Expense Allocations</h3>
+                    <div class="chart-box">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Day-of-Week Heatmap -->
+                <div class="panel-card">
+                    <div class="card-title-group flex-between">
+                        <div class="title-left">
+                            <i data-lucide="calendar-days" class="title-icon"></i>
+                            <h3>Spending Heatmap</h3>
+                        </div>
+                        <span class="badge-pill subtle-pill">By Day of Week</span>
+                    </div>
+                    <div id="heatmap-grid" class="heatmap-grid"></div>
+                    <p class="heatmap-legend"><span class="heatmap-legend-low"></span> Low spend <span class="heatmap-legend-spacer"></span> <span class="heatmap-legend-high"></span> High spend</p>
+                </div>
+            </div>
+
+            <!-- ── Third Column: Insights, Budgets, Goals ── -->
+            <div class="visuals-panel">
+                
+                <!-- Financial Intelligence -->
+                <div class="panel-card insights-card">
+                    <div class="card-title-group flex-between">
+                        <div class="title-left">
+                            <i data-lucide="zap" class="title-icon"></i>
+                            <h3>Financial Intelligence</h3>
+                        </div>
+                        <span class="badge-pill subtle-pill">Real-time</span>
+                    </div>
+                    <div class="insights-grid">
+                        <div class="insight-stat">
+                            <span class="insight-label">TOP EXPENSE</span>
+                            <span id="top-expense-val" class="insight-value">None</span>
+                        </div>
+                        <div class="insight-stat">
+                            <span class="insight-label">AVG TRANSACTION</span>
+                            <span id="avg-tx-val" class="insight-value">$0.00</span>
+                        </div>
+                        <div class="insight-stat">
+                            <span class="insight-label">NET CASH FLOW</span>
+                            <span id="net-runrate-val" class="insight-value">$0.00</span>
+                        </div>
+                        <div class="insight-stat">
+                            <span class="insight-label">DATA PRIVACY</span>
+                            <span class="insight-value text-accent"><i data-lucide="shield" style="width:11px;height:11px;display:inline-block;vertical-align:middle;"></i> Local Only</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Limits -->
+                <div class="panel-card">
+                    <div class="card-title-group flex-between">
+                        <div class="title-left">
+                            <i data-lucide="gauge" class="title-icon"></i>
+                            <h3>Category Budgets</h3>
+                        </div>
+                        <span class="badge-pill subtle-pill">This Month</span>
+                    </div>
+                    <div class="budget-add-row">
+                        <select id="budget-cat-input" class="filter-select" aria-label="Budget category">
+                            <option value="">Select category…</option>
+                            <option>Housing</option>
+                            <option>Food</option>
+                            <option>Transport</option>
+                            <option>Utilities</option>
+                            <option>Entertainment</option>
+                            <option>Healthcare</option>
+                            <option>Other</option>
+                        </select>
+                        <input type="number" id="budget-amt-input" class="budget-amount-input" placeholder="Limit/mo" min="1" step="1">
+                        <button id="add-budget-btn" class="btn primary-btn btn-sm">Set Limit</button>
+                    </div>
+                    <div id="budget-list" class="budget-list"></div>
+                </div>
+
+                <!-- Savings Goals -->
+                <div class="panel-card">
+                    <div class="card-title-group flex-between">
+                        <div class="title-left">
+                            <i data-lucide="target" class="title-icon"></i>
+                            <h3>Savings Goals</h3>
+                        </div>
+                        <span class="badge-pill subtle-pill">Targets</span>
+                    </div>
+                    <div class="budget-add-row">
+                        <input type="text" id="goal-name-input" class="budget-amount-input" placeholder="Goal name (e.g. Vacation)" style="flex:2;">
+                        <input type="number" id="goal-target-input" class="budget-amount-input" placeholder="Target $" min="1" step="1">
+                        <button id="add-goal-btn" class="btn primary-btn btn-sm">Add Goal</button>
+                    </div>
+                    <div id="goals-list" class="budget-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-bar">
+        <span class="footer-logo">FinSight ® Lab</span>
+        <span class="footer-meta">Interactive Financial Simulations &amp; Ledgering</span>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Home</a>
+            <a href="#features-anchor" class="footer-link">Features</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
